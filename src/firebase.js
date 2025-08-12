@@ -1,34 +1,56 @@
 // src/firebase.js
 
-// Import the Firebase modules you'll need.
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithCustomToken, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// Import Firebase modules for Vite
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut, 
+  signInAnonymously 
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  onSnapshot, 
+  getDocs, 
+  addDoc, 
+  serverTimestamp 
+} from 'firebase/firestore';
 
-// Global variables provided by the Canvas environment.
-// We check for their existence to prevent errors in development.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyALq-OmR8vcJsIHF99qz26cSGVYbhdfh_s",
+  authDomain: "fun-quiz-website.firebaseapp.com",
+  projectId: "fun-quiz-website",
+  storageBucket: "fun-quiz-website.firebasestorage.app",
+  messagingSenderId: "947442001317",
+  appId: "1:947442001317:web:845794bf8ac85ca2fa744c",
+  measurementId: "G-169LYZVJVV"
+};
 
-// Initialize Firebase with the provided configuration.
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// A helper function to sign in the user.
-export const initializeFirebase = async () => {
-    try {
-        if (initialAuthToken) {
-            await signInWithCustomToken(auth, initialAuthToken);
-        } else {
-            await signInAnonymously(auth);
-        }
-        console.log("Firebase authentication successful!");
-    } catch (error) {
-        console.error("Firebase authentication failed:", error);
-    }
+// Export the initialized app, auth, and database instances,
+// along with the specific functions used in your application.
+export { 
+  app, 
+  auth, 
+  db, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  onAuthStateChanged, 
+  signOut, 
+  signInAnonymously, 
+  collection, 
+  query, 
+  onSnapshot, 
+  getDocs, 
+  addDoc, 
+  serverTimestamp 
 };
-
-// Export the Firebase services so other components can use them.
-export { auth, db, signOut, onAuthStateChanged, signInWithCustomToken, doc, getDoc, setDoc, onSnapshot, collection, query, addDoc, serverTimestamp };

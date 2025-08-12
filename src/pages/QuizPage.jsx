@@ -1,154 +1,210 @@
 import React, { useState } from 'react';
-import { quizzes } from '../data/quizzes'; // Import the quiz data
+
+// Placeholder data for quizzes
+const quizList = [
+  {
+    id: 1,
+    title: "General Knowledge",
+    description: "Test your knowledge on a wide range of topics.",
+    difficulty: "Easy",
+    image: "https://placehold.co/400x200/4f46e5/ffffff?text=General+Knowledge",
+  },
+  {
+    id: 2,
+    title: "Science & Nature",
+    description: "Explore the world of science, from biology to physics.",
+    difficulty: "Medium",
+    image: "https://placehold.co/400x200/4f46e5/ffffff?text=Science+%26+Nature",
+  },
+  {
+    id: 3,
+    title: "History Buff",
+    description: "Journey through time and test your historical facts.",
+    difficulty: "Hard",
+    image: "https://placehold.co/400x200/4f46e5/ffffff?text=History+Buff",
+  },
+  {
+    id: 4,
+    title: "Movie Trivia",
+    description: "How well do you know your films and actors?",
+    difficulty: "Easy",
+    image: "https://placehold.co/400x200/4f46e5/ffffff?text=Movie+Trivia",
+  },
+  {
+    id: 5,
+    title: "Sports Mania",
+    description: "A fun challenge for all the sports fans out there.",
+    difficulty: "Medium",
+    image: "https://placehold.co/400x200/4f46e5/ffffff?text=Sports+Mania",
+  },
+];
 
 const QuizPage = () => {
-  // State for the currently selected quiz topic
-  const [currentQuiz, setCurrentQuiz] = useState(null);
-  // State to track the current question index
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  // State for the user's score
-  const [score, setScore] = useState(0);
-  // State to check if the quiz is over
-  const [showResults, setShowResults] = useState(false);
-  // State to track the user's selected answer for the current question
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  // State to manage if an answer has been chosen
-  const [answerChosen, setAnswerChosen] = useState(false);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
 
-  // Function to handle the user's answer selection
-  const handleAnswerClick = (answerIndex) => {
-    if (!answerChosen) {
-      setSelectedAnswer(answerIndex);
-      setAnswerChosen(true);
+  const startQuiz = (quizId) => {
+    // Logic to start a quiz with a given ID
+    console.log(`Starting quiz with ID: ${quizId}`);
+    setSelectedQuiz(quizId);
+    // Here you would navigate to the actual quiz component
+  };
 
-      // Check if the answer is correct and update the score
-      if (answerIndex === currentQuiz.questions[currentQuestionIndex].correctAnswerIndex) {
-        setScore(score + 1);
-      }
+  const renderQuizContent = () => {
+    if (selectedQuiz) {
+      // Logic for displaying the quiz questions
+      return (
+        <div className="quiz-content">
+          <button onClick={() => setSelectedQuiz(null)} className="back-btn">
+            &larr; Back to Quizzes
+          </button>
+          <h2 className="quiz-title-inner">Quiz Questions will appear here!</h2>
+          <p className="quiz-description-inner">
+            You are currently playing the quiz with ID: {selectedQuiz}.
+          </p>
+        </div>
+      );
     }
-  };
-
-  // Function to move to the next question
-  const handleNextQuestion = () => {
-    const nextQuestion = currentQuestionIndex + 1;
-
-    // Reset states for the next question
-    setSelectedAnswer(null);
-    setAnswerChosen(false);
-
-    if (nextQuestion < currentQuiz.questions.length) {
-      setCurrentQuestionIndex(nextQuestion);
-    } else {
-      // If no more questions, show the results
-      setShowResults(true);
-    }
-  };
-
-  // Function to reset the quiz
-  const restartQuiz = () => {
-    setCurrentQuiz(null);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setShowResults(false);
-  };
-
-  // ---------------- Render quiz topic selection screen -----------------
-  if (!currentQuiz) {
+    
+    // Display the list of quizzes
     return (
-      <div className="min-h-screen bg-gray-100 p-8">
-        <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
-          Choose a Quiz Topic
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {quizzes.map((quiz, index) => (
+      <div className="quiz-page-container">
+        <h1 className="quiz-page-header">Choose a Quiz</h1>
+        <div className="quiz-card-grid">
+          {quizList.map((quiz) => (
             <div
-              key={index}
-              onClick={() => setCurrentQuiz(quiz)}
-              className="bg-white rounded-2xl shadow-xl p-6 text-center cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+              key={quiz.id}
+              className="quiz-card"
+              onClick={() => startQuiz(quiz.id)}
             >
-              <h2 className="text-2xl font-bold text-indigo-600 mb-2">
-                {quiz.topic}
-              </h2>
-              <p className="text-gray-600">
-                Test your knowledge with {quiz.questions.length} questions.
-              </p>
+              <img src={quiz.image} alt={quiz.title} className="quiz-card-image" />
+              <div className="quiz-card-content">
+                <h2 className="quiz-card-title">{quiz.title}</h2>
+                <p className="quiz-card-description">{quiz.description}</p>
+                <span className={`quiz-card-difficulty ${quiz.difficulty.toLowerCase()}`}>
+                  {quiz.difficulty}
+                </span>
+              </div>
             </div>
           ))}
         </div>
+        
+        {/* Custom styles for the Quiz page */}
+        <style>{`
+          .quiz-page-container {
+            padding: 2rem;
+            background-color: var(--background-color);
+          }
+          
+          .quiz-page-header {
+            font-size: 2.25rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 2.5rem;
+          }
+          
+          .quiz-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+          }
+          
+          .quiz-card {
+            background-color: var(--card-background-color);
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .quiz-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          }
+          
+          .quiz-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+          }
+          
+          .quiz-card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+          }
+          
+          .quiz-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+          }
+          
+          .quiz-card-description {
+            color: var(--secondary-text-color);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+          }
+          
+          .quiz-card-difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* pill shape */
+            font-size: 0.875rem;
+            font-weight: 600;
+          }
+
+          .quiz-card-difficulty.easy {
+            background-color: #d1fae5;
+            color: #059669;
+          }
+          
+          .quiz-card-difficulty.medium {
+            background-color: #fef3c7;
+            color: #f59e0b;
+          }
+          
+          .quiz-card-difficulty.hard {
+            background-color: #fee2e2;
+            color: #ef4444;
+          }
+
+          .back-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text-color);
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+          }
+          
+          .quiz-title-inner {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+          }
+          
+          .quiz-description-inner {
+            font-size: 1.125rem;
+            color: var(--secondary-text-color);
+            text-align: center;
+          }
+        `}</style>
       </div>
     );
-  }
-
-  // ---------------- Render quiz results screen -----------------
-  if (showResults) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center max-w-md w-full">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Quiz Complete!</h2>
-          <p className="text-xl text-gray-600 mb-6">
-            You scored {score} out of {currentQuiz.questions.length}.
-          </p>
-          <button
-            onClick={restartQuiz}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
-          >
-            Play Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ---------------- Render active quiz questions -----------------
-  const currentQuestion = currentQuiz.questions[currentQuestionIndex];
-  const totalQuestions = currentQuiz.questions.length;
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full">
-        <div className="text-right text-gray-500 mb-4">
-          Question {currentQuestionIndex + 1} / {totalQuestions}
-        </div>
-        
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          {currentQuestion.questionText}
-        </h2>
-        
-        <div className="space-y-4">
-          {currentQuestion.answerOptions.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswerClick(index)}
-              disabled={answerChosen}
-              className={`w-full py-3 px-4 text-left rounded-xl border-2 transition-all duration-300 transform
-                ${
-                  answerChosen
-                    ? index === currentQuestion.correctAnswerIndex
-                      ? 'bg-green-100 border-green-500 text-green-700 font-bold' // Correct answer
-                      : index === selectedAnswer
-                      ? 'bg-red-100 border-red-500 text-red-700 font-bold' // Incorrect selected answer
-                      : 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed' // Other options
-                    : 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'
-                }
-              `}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        
-        {/* 'Next Question' button, visible only after an answer is chosen */}
-        {answerChosen && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={handleNextQuestion}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
-            >
-              {currentQuestionIndex === totalQuestions - 1 ? 'See Results' : 'Next Question'}
-            </button>
-          </div>
-        )}
-      </div>
+    <div className="quiz-wrapper">
+      {renderQuizContent()}
     </div>
   );
 };

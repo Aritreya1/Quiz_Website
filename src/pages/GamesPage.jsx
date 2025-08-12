@@ -1,79 +1,116 @@
-import React from 'react';
+import React, { useState } from 'react';
+import TriviaGame from '../components/games/TriviaGame';
+import BingoGame from '../components/games/BingoGame';
+import WordScrambleGame from '../components/games/WordScrambleGame';
+import GuessTheNumberGame from '../components/games/GuessTheNumberGame';
+import RockPaperScissorsGame from '../components/games/RockPaperScissorsGame';
 
-// This is the component for a single game card.
-// We'll use this to display each game on the GamesPage.
-const GameCard = ({ title, description, imageUrl, comingSoon }) => {
-  return (
-    <div
-      className={`bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center text-center transition-all duration-300 transform ${
-        comingSoon ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 hover:shadow-2xl'
-      }`}
-    >
-      {/* Placeholder for a game image or icon */}
-      <div className="w-24 h-24 mb-4 flex items-center justify-center bg-gray-200 rounded-full">
-        {imageUrl ? (
-          <img src={imageUrl} alt={title} className="w-full h-full object-cover rounded-full" />
-        ) : (
-          <span className="text-4xl text-gray-500">🎮</span>
-        )}
-      </div>
-      <h3 className="text-xl font-bold text-gray-800 mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4">{description}</p>
-      {/* Button to play the game, disabled if it's not yet available */}
-      <button
-        disabled={comingSoon}
-        className={`w-full py-2 rounded-xl font-semibold transition-all duration-300 ${
-          comingSoon
-            ? 'bg-gray-400 text-gray-700'
-            : 'bg-indigo-600 text-white hover:bg-indigo-700'
-        }`}
-      >
-        {comingSoon ? 'Coming Soon' : 'Play Now'}
-      </button>
-    </div>
-  );
-};
-
-// This is the main GamesPage component.
+// This component acts as the main game page, handling game selection and rendering.
 const GamesPage = () => {
-  // A sample array of game data. You can expand this later.
+  // State to track which game is currently selected.
+  const [currentGame, setCurrentGame] = useState(null);
+
+  // A list of all available games for the selection menu.
   const games = [
-    {
-      title: 'Trivia Challenge',
-      description: 'Test your knowledge with a series of challenging trivia questions!',
-      comingSoon: false,
-    },
-    {
-      title: 'Bingo Blitz',
-      description: 'Mark off your numbers and shout BINGO!',
-      comingSoon: true,
-    },
-    {
-      title: 'Word Scramble',
-      description: 'Unscramble the letters to find the hidden word.',
-      comingSoon: true,
-    },
+    { id: 'trivia', name: 'Trivia Challenge', description: 'Test your general knowledge!' },
+    { id: 'bingo', name: 'Bingo Blitz', description: 'Mark your card and call BINGO!' },
+    { id: 'wordscramble', name: 'Word Scramble', description: 'Unscramble the letters to find the word.' },
+    { id: 'guessthenumber', name: 'Guess the Number', description: 'Can you guess the secret number?' },
+    { id: 'rockpaperscissors', name: 'Rock, Paper, Scissors', description: 'The classic game of chance.' },
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
-        Games
-      </h1>
-      <p className="text-lg text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-        Choose a game from the list below and start playing! More games are on the way.
-      </p>
+  // A function to render the correct game component based on the state.
+  const renderGame = () => {
+    switch (currentGame) {
+      case 'trivia':
+        return <TriviaGame onBackToGames={() => setCurrentGame(null)} />;
+      case 'bingo':
+        return <BingoGame onBackToGames={() => setCurrentGame(null)} />;
+      case 'wordscramble':
+        return <WordScrambleGame onBackToGames={() => setCurrentGame(null)} />;
+      case 'guessthenumber':
+        return <GuessTheNumberGame onBackToGames={() => setCurrentGame(null)} />;
+      case 'rockpaperscissors':
+        return <RockPaperScissorsGame onBackToGames={() => setCurrentGame(null)} />;
+      default:
+        // This is the default view, showing the game selection menu.
+        return (
+          <div className="games-page-container">
+            <h1 className="games-header">Choose a Game</h1>
+            <div className="game-card-grid">
+              {games.map((game) => (
+                <div
+                  key={game.id}
+                  onClick={() => setCurrentGame(game.id)}
+                  className="game-card"
+                >
+                  <h2 className="game-card-title">
+                    {game.name}
+                  </h2>
+                  <p className="game-card-description">
+                    {game.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            {/* Adding the custom styles for this page directly for simplicity */}
+            <style>{`
+              .games-page-container {
+                padding: 2rem;
+                background-color: var(--background-color);
+              }
+              
+              .games-header {
+                font-size: 2.25rem;
+                font-weight: 800;
+                text-align: center;
+                color: var(--text-color);
+                margin-bottom: 2.5rem;
+              }
+              
+              .game-card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+                max-width: 1280px;
+                margin: 0 auto;
+              }
+              
+              .game-card {
+                background-color: var(--card-background-color);
+                border-radius: 1.5rem;
+                box-shadow: var(--shadow);
+                padding: 1.5rem;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+              }
+              
+              .game-card:hover {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+              }
+              
+              .game-card-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-color);
+                margin-bottom: 0.5rem;
+              }
+              
+              .game-card-description {
+                color: var(--secondary-text-color);
+              }
+            `}</style>
+          </div>
+        );
+    }
+  };
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {games.map((game, index) => (
-          <GameCard
-            key={index}
-            title={game.title}
-            description={game.description}
-            comingSoon={game.comingSoon}
-          />
-        ))}
-      </div>
+  return (
+    <div className="games-wrapper">
+      {renderGame()}
     </div>
   );
 };
